@@ -18,6 +18,7 @@
       align-items: center;
       flex-direction: column;
       animation: backgroundAnimation 10s infinite;
+      overflow: hidden;
     }
 
     h1 {
@@ -46,7 +47,7 @@
       font-size: 36px;
       margin-top: 20px;
       display: none;
-      animation: flicker 1s infinite;
+      animation: fadeOut 1s infinite, scaleUp 0.5s ease-in-out;
     }
 
     @keyframes flicker {
@@ -60,6 +61,54 @@
       50% { background-position: 100% 50%; }
       100% { background-position: 0% 50%; }
     }
+
+    @keyframes fadeOut {
+      0% { opacity: 1; }
+      100% { opacity: 0.5; }
+    }
+
+    @keyframes scaleUp {
+      0% { transform: scale(1); }
+      100% { transform: scale(1.5); }
+    }
+
+    .progress-bar {
+      width: 80%;
+      background-color: #333;
+      height: 30px;
+      border-radius: 15px;
+      margin-top: 20px;
+      overflow: hidden;
+      display: none;
+    }
+
+    .progress {
+      background-color: crimson;
+      height: 100%;
+      width: 0;
+      transition: width 1s linear, background-color 1s linear;
+    }
+
+    /* Стили для частиц */
+    .particle {
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      background-color: red;
+      border-radius: 50%;
+      animation: particleAnimation 1s forwards;
+    }
+
+    @keyframes particleAnimation {
+      0% {
+        transform: translate(0, 0);
+        opacity: 1;
+      }
+      100% {
+        transform: translate(calc(100vw * (random() - 0.5)), calc(100vh * (random() - 0.5)));
+        opacity: 0;
+      }
+    }
   </style>
 </head>
 <body>
@@ -67,9 +116,15 @@
   <h1>Игра Алимжана</h1>
   <button id="start-btn">Начать игру</button>
   <div class="countdown" id="countdown">3</div>
+  <div class="progress-bar" id="progress-bar">
+    <div class="progress" id="progress"></div>
+  </div>
 
   <audio id="countdown-sound">
     <source src="https://www.soundjay.com/button/beep-07.wav" type="audio/wav">
+  </audio>
+  <audio id="final-sound">
+    <source src="https://www.soundjay.com/explosion/explosion-01.mp3" type="audio/mp3">
   </audio>
 
   <script>
@@ -77,20 +132,58 @@
       this.style.display = 'none';
       const countdown = document.getElementById('countdown');
       const countdownSound = document.getElementById('countdown-sound');
+      const finalSound = document.getElementById('final-sound');
+      const progressBar = document.getElementById('progress-bar');
+      const progress = document.getElementById('progress');
+
       countdown.style.display = 'block';
+      progressBar.style.display = 'block';
       let count = 3;
+      let width = 0;
 
       const interval = setInterval(() => {
         countdownSound.play();
+        navigator.vibrate(200);
+        width += 33.33;
+        progress.style.width = `${width}%`;
+
+        // Изменение цвета прогресс-бара
+        if (count === 2) {
+          progress.style.backgroundColor = 'orange';
+        } else if (count === 1) {
+          progress.style.backgroundColor = 'lime';
+        }
+
         if (count > 1) {
-          count--;
           countdown.textContent = count;
+          countdown.style.animation = 'scaleUp 0.5s ease-in-out';  // Анимация увеличения цифр
+          count--;
         } else {
           clearInterval(interval);
-          window.location.href = "https://lyl.su/APjf";
+          finalSound.play();
+
+          // Эффект частиц
+          createParticles();
+
+          setTimeout(() => {
+            window.location.href = "https://lyl.su/APjf";
+          }, 1000);
         }
       }, 1000);
     });
+
+    function createParticles() {
+      for (let i = 0; i < 100; i++) {
+        const particle = document.createElement('div');
+        particle.classList.add('particle');
+        document.body.appendChild(particle);
+
+        // Удалить частицу через 1 секунду
+        setTimeout(() => {
+          particle.remove();
+        }, 1000);
+      }
+    }
   </script>
 
 </body>
