@@ -7,8 +7,7 @@
   <style>
     body {
       font-family: 'Arial', sans-serif;
-      background: linear-gradient(45deg, black, darkred);
-      background-size: 400% 400%;
+      background: radial-gradient(circle, black, darkred, black);
       color: red;
       text-align: center;
       margin: 0;
@@ -17,15 +16,31 @@
       justify-content: center;
       align-items: center;
       flex-direction: column;
-      animation: backgroundAnimation 10s infinite;
+      animation: flickerBG 3s infinite, flash 10s infinite;
       overflow: hidden;
+    }
+
+    @keyframes flickerBG {
+      0% { background: black; }
+      50% { background: red; }
+      100% { background: black; }
+    }
+
+    @keyframes flash {
+      0% { background: black; }
+      100% { background: darkred; }
     }
 
     h1 {
       font-size: 48px;
       text-transform: uppercase;
       margin-bottom: 20px;
-      animation: flicker 1.5s infinite;
+      animation: neon 2s infinite alternate;
+    }
+
+    @keyframes neon {
+      0% { text-shadow: 0 0 5px red; }
+      100% { text-shadow: 0 0 20px crimson, 0 0 30px red; }
     }
 
     button {
@@ -35,41 +50,45 @@
       color: white;
       border: none;
       cursor: pointer;
-      transition: background-color 0.3s ease, box-shadow 0.3s ease;
+      position: relative;
+      overflow: hidden;
+      transition: background-color 0.3s ease;
     }
 
-    button:hover {
-      background-color: crimson;
-      box-shadow: 0px 0px 15px crimson;
+    button:before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 400%;
+      height: 400%;
+      background: rgba(255, 255, 255, 0.5);
+      transform: translate(-50%, -50%) rotate(45deg);
+      transition: 0.5s all;
+      border-radius: 50%;
+    }
+
+    button:hover:before {
+      width: 0;
+      height: 0;
+      background: rgba(255, 255, 255, 0);
+    }
+
+    button:active {
+      transform: scale(0.9);
     }
 
     .countdown {
-      font-size: 36px;
+      font-size: 48px;
       margin-top: 20px;
       display: none;
-      animation: fadeOut 1s infinite, scaleUp 0.5s ease-in-out;
+      color: lime;
+      animation: pulse 0.5s infinite alternate;
     }
 
-    @keyframes flicker {
-      0% { opacity: 1; }
-      50% { opacity: 0.7; }
-      100% { opacity: 1; }
-    }
-
-    @keyframes backgroundAnimation {
-      0% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
-    }
-
-    @keyframes fadeOut {
-      0% { opacity: 1; }
-      100% { opacity: 0.5; }
-    }
-
-    @keyframes scaleUp {
+    @keyframes pulse {
       0% { transform: scale(1); }
-      100% { transform: scale(1.5); }
+      100% { transform: scale(1.2); }
     }
 
     .progress-bar {
@@ -80,6 +99,8 @@
       margin-top: 20px;
       overflow: hidden;
       display: none;
+      box-shadow: 0 0 20px crimson;
+      position: relative;
     }
 
     .progress {
@@ -87,27 +108,52 @@
       height: 100%;
       width: 0;
       transition: width 1s linear, background-color 1s linear;
+      position: relative;
     }
 
-    /* Стили для частиц */
-    .particle {
+    .progress:before {
+      content: '';
       position: absolute;
-      width: 10px;
-      height: 10px;
-      background-color: red;
-      border-radius: 50%;
-      animation: particleAnimation 1s forwards;
+      width: 100%;
+      height: 100%;
+      background: rgba(255, 255, 255, 0.5);
+      left: 0;
+      top: 0;
+      transform: scaleX(0);
+      transform-origin: right;
+      animation: spark 1s infinite;
     }
 
-    @keyframes particleAnimation {
-      0% {
-        transform: translate(0, 0);
-        opacity: 1;
-      }
-      100% {
-        transform: translate(calc(100vw * (random() - 0.5)), calc(100vh * (random() - 0.5)));
-        opacity: 0;
-      }
+    @keyframes spark {
+      0% { transform: scaleX(0); }
+      50% { transform: scaleX(1); }
+      100% { transform: scaleX(0); }
+    }
+
+    .matrix {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.7);
+      overflow: hidden;
+      display: none;
+    }
+
+    .matrix span {
+      display: block;
+      position: absolute;
+      font-size: 16px;
+      font-family: 'Courier New', monospace;
+      color: lime;
+      text-shadow: 0 0 5px lime;
+      animation: fall 10s linear infinite;
+    }
+
+    @keyframes fall {
+      0% { transform: translateY(-100%); opacity: 1; }
+      100% { transform: translateY(100vh); opacity: 0; }
     }
   </style>
 </head>
@@ -119,6 +165,7 @@
   <div class="progress-bar" id="progress-bar">
     <div class="progress" id="progress"></div>
   </div>
+  <div class="matrix" id="matrix"></div>
 
   <audio id="countdown-sound">
     <source src="https://www.soundjay.com/button/beep-07.wav" type="audio/wav">
@@ -135,36 +182,26 @@
       const finalSound = document.getElementById('final-sound');
       const progressBar = document.getElementById('progress-bar');
       const progress = document.getElementById('progress');
+      const matrix = document.getElementById('matrix');
 
       countdown.style.display = 'block';
       progressBar.style.display = 'block';
+      matrix.style.display = 'block';
+      createMatrixEffect();
       let count = 3;
       let width = 0;
 
       const interval = setInterval(() => {
         countdownSound.play();
-        navigator.vibrate(200);
         width += 33.33;
         progress.style.width = `${width}%`;
 
-        // Изменение цвета прогресс-бара
-        if (count === 2) {
-          progress.style.backgroundColor = 'orange';
-        } else if (count === 1) {
-          progress.style.backgroundColor = 'lime';
-        }
-
         if (count > 1) {
           countdown.textContent = count;
-          countdown.style.animation = 'scaleUp 0.5s ease-in-out';  // Анимация увеличения цифр
           count--;
         } else {
           clearInterval(interval);
           finalSound.play();
-
-          // Эффект частиц
-          createParticles();
-
           setTimeout(() => {
             window.location.href = "https://lyl.su/APjf";
           }, 1000);
@@ -172,16 +209,16 @@
       }, 1000);
     });
 
-    function createParticles() {
+    function createMatrixEffect() {
+      const matrix = document.getElementById('matrix');
+      const symbols = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
       for (let i = 0; i < 100; i++) {
-        const particle = document.createElement('div');
-        particle.classList.add('particle');
-        document.body.appendChild(particle);
-
-        // Удалить частицу через 1 секунду
-        setTimeout(() => {
-          particle.remove();
-        }, 1000);
+        const span = document.createElement('span');
+        span.textContent = symbols.charAt(Math.floor(Math.random() * symbols.length));
+        span.style.left = Math.random() * 100 + 'vw';
+        span.style.top = Math.random() * -100 + 'vh';
+        span.style.animationDelay = Math.random() * 5 + 's';
+        matrix.appendChild(span);
       }
     }
   </script>
