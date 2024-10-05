@@ -36,6 +36,7 @@
       text-transform: uppercase;
       margin-bottom: 20px;
       animation: neon 2s infinite alternate;
+      cursor: pointer; /* Добавлено для указания, что элемент кликабельный */
     }
 
     @keyframes neon {
@@ -155,17 +156,45 @@
       0% { transform: translateY(-100%); opacity: 1; }
       100% { transform: translateY(100vh); opacity: 0; }
     }
+
+    /* Новый стиль для анимации заголовка */
+    .move-out {
+      animation: moveOut 1s forwards;
+    }
+
+    @keyframes moveOut {
+      0% { transform: translateY(0); }
+      100% { transform: translateY(-100vh); opacity: 0; }
+    }
+
+    /* Стиль для изображения */
+    #game-image {
+      display: none;
+      width: 100%;
+      height: auto;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      animation: fadeIn 1s forwards;
+    }
+
+    @keyframes fadeIn {
+      0% { opacity: 0; }
+      100% { opacity: 1; }
+    }
   </style>
 </head>
 <body>
 
-  <h1>Игра Алимжана</h1>
+  <h1 id="game-title">Игра Алимжана</h1>
   <button id="start-btn">Начать игру</button>
   <div class="countdown" id="countdown">3</div>
   <div class="progress-bar" id="progress-bar">
     <div class="progress" id="progress"></div>
   </div>
   <div class="matrix" id="matrix"></div>
+  <img id="game-image" src="IMG-20240905-WA0050.jpg" alt="Game Image">
 
   <audio id="countdown-sound">
     <source src="https://www.soundjay.com/button/beep-07.wav" type="audio/wav">
@@ -175,6 +204,13 @@
   </audio>
 
   <script>
+    document.getElementById('game-title').addEventListener('click', function() {
+      this.classList.add('move-out'); // Добавить класс для анимации
+      setTimeout(() => {
+        document.getElementById('game-image').style.display = 'block'; // Показать изображение после анимации
+      }, 1000); // Время, равное продолжительности анимации
+    });
+
     document.getElementById('start-btn').addEventListener('click', function() {
       this.style.display = 'none';
       const countdown = document.getElementById('countdown');
