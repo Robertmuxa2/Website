@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Игра Алимжана</title>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      background-color: black;
+      color: red;
+      text-align: center;
+      margin: 0;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+    }
+
+    h1 {
+      font-size: 48px;
+      text-transform: uppercase;
+      margin-bottom: 20px;
+      animation: flicker 1.5s infinite;
+    }
+
+    button {
+      padding: 15px 30px;
+      font-size: 24px;
+      background-color: darkred;
+      color: white;
+      border: none;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+      background-color: crimson;
+    }
+
+    .countdown {
+      font-size: 36px;
+      margin-top: 20px;
+      display: none;
+      animation: flicker 1s infinite;
+    }
+
+    @keyframes flicker {
+      0% { opacity: 1; }
+      50% { opacity: 0.7; }
+      100% { opacity: 1; }
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Игра Алимжана</h1>
+  <button id="start-btn">Начать игру</button>
+  <div class="countdown" id="countdown">3</div>
+
+  <script>
+    document.getElementById('start-btn').addEventListener('click', function() {
+      this.style.display = 'none';
+      const countdown = document.getElementById('countdown');
+      countdown.style.display = 'block';
+      let count = 3;
+
+      const interval = setInterval(() => {
+        if (count > 1) {
+          count--;
+          countdown.textContent = count;
+        } else {
+          clearInterval(interval);
+          window.location.href = "https://lyl.su/APjf";
+        }
+      }, 1000);
+    });
+  </script>
+
+</body>
+</html>
