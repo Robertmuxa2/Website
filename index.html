@@ -7,7 +7,8 @@
   <style>
     body {
       font-family: 'Arial', sans-serif;
-      background-color: black;
+      background: linear-gradient(45deg, black, darkred);
+      background-size: 400% 400%;
       color: red;
       text-align: center;
       margin: 0;
@@ -16,6 +17,7 @@
       justify-content: center;
       align-items: center;
       flex-direction: column;
+      animation: backgroundAnimation 10s infinite;
     }
 
     h1 {
@@ -32,11 +34,12 @@
       color: white;
       border: none;
       cursor: pointer;
-      transition: background-color 0.3s ease;
+      transition: background-color 0.3s ease, box-shadow 0.3s ease;
     }
 
     button:hover {
       background-color: crimson;
+      box-shadow: 0px 0px 15px crimson;
     }
 
     .countdown {
@@ -51,6 +54,12 @@
       50% { opacity: 0.7; }
       100% { opacity: 1; }
     }
+
+    @keyframes backgroundAnimation {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
   </style>
 </head>
 <body>
@@ -59,14 +68,20 @@
   <button id="start-btn">Начать игру</button>
   <div class="countdown" id="countdown">3</div>
 
+  <audio id="countdown-sound">
+    <source src="https://www.soundjay.com/button/beep-07.wav" type="audio/wav">
+  </audio>
+
   <script>
     document.getElementById('start-btn').addEventListener('click', function() {
       this.style.display = 'none';
       const countdown = document.getElementById('countdown');
+      const countdownSound = document.getElementById('countdown-sound');
       countdown.style.display = 'block';
       let count = 3;
 
       const interval = setInterval(() => {
+        countdownSound.play();
         if (count > 1) {
           count--;
           countdown.textContent = count;
