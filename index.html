@@ -9,171 +9,100 @@
       font-family: 'Arial', sans-serif;
       background: linear-gradient(135deg, #0d0d0d, #400000);
       color: #fff;
-      text-align: center;
       margin: 0;
       height: 100vh;
       display: flex;
       justify-content: center;
       align-items: center;
       flex-direction: column;
+      text-align: center;
       overflow: hidden;
       position: relative;
     }
 
     h1 {
-      font-size: 64px;
-      text-transform: uppercase;
+      font-size: 56px;
       margin-bottom: 40px;
-      cursor: pointer;
-      position: relative;
-      transition: transform 0.8s ease, opacity 0.8s ease, color 1s ease;
-      animation: glow 2s infinite alternate;
       color: crimson;
-      letter-spacing: 2px;
+      transition: transform 0.5s ease, opacity 0.5s ease, color 0.5s ease;
+      animation: pulse 3s infinite alternate;
     }
 
-    @keyframes glow {
-      0% { text-shadow: 0 0 10px crimson, 0 0 20px red, 0 0 30px red; }
-      100% { text-shadow: 0 0 20px crimson, 0 0 40px red, 0 0 50px crimson; }
-    }
-
-    h1.animate {
-      transform: translateY(-100px) scale(1.1);
-      opacity: 0.5;
-      color: darkred;
+    @keyframes pulse {
+      0% { text-shadow: 0 0 10px crimson, 0 0 20px red; }
+      100% { text-shadow: 0 0 40px red, 0 0 60px crimson; }
     }
 
     img {
       display: none;
       max-width: 80%;
       max-height: 80%;
-      margin-top: 40px;
-      box-shadow: 0 0 40px rgba(255, 0, 0, 0.7);
-      border-radius: 20px;
-      transition: transform 1.2s ease, opacity 1.2s ease;
-    }
-
-    img.show {
-      display: block;
-      transform: scale(1.1);
-      opacity: 1;
+      margin-top: 20px;
+      box-shadow: 0 0 20px rgba(255, 0, 0, 0.6);
+      border-radius: 10px;
     }
 
     button {
-      padding: 15px 40px;
-      font-size: 24px;
+      padding: 12px 30px;
+      font-size: 18px;
       background-color: crimson;
       color: white;
       border: none;
-      border-radius: 10px;
+      border-radius: 8px;
       cursor: pointer;
-      position: relative;
-      overflow: hidden;
-      transition: background-color 0.3s ease, transform 0.3s ease;
-      margin-top: 20px;
-    }
-
-    button:before {
-      content: '';
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      width: 300%;
-      height: 300%;
-      background: rgba(255, 255, 255, 0.4);
-      transform: translate(-50%, -50%) rotate(45deg);
-      transition: 0.6s all ease-in-out;
-      border-radius: 50%;
-    }
-
-    button:hover:before {
-      width: 0;
-      height: 0;
-      background: rgba(255, 255, 255, 0);
+      transition: background-color 0.3s ease;
     }
 
     button:hover {
       background-color: darkred;
-      transform: scale(1.05);
     }
 
-    button:active {
-      transform: scale(0.95);
-    }
-
-    .background-effect {
+    /* Фоновые круги */
+    .background {
       position: absolute;
       top: 0;
       left: 0;
       width: 100%;
       height: 100%;
-      pointer-events: none;
       overflow: hidden;
       z-index: -1;
     }
 
     .circle {
       position: absolute;
-      background-color: rgba(255, 0, 0, 0.6);
+      background-color: rgba(255, 0, 0, 0.4);
       border-radius: 50%;
-      animation: pulseCircle 10s infinite ease-in-out;
-      opacity: 0.7;
+      animation: float 8s infinite ease-in-out;
     }
 
-    @keyframes pulseCircle {
-      0% {
-        transform: scale(0);
-        opacity: 0.1;
-      }
-      50% {
-        transform: scale(1);
-        opacity: 0.4;
-      }
-      100% {
-        transform: scale(1.8);
-        opacity: 0;
-      }
+    @keyframes float {
+      0% { transform: translateY(0); }
+      50% { transform: translateY(-20px); }
+      100% { transform: translateY(0); }
     }
 
     .circle:nth-child(1) {
-      width: 300px;
-      height: 300px;
-      top: 20%;
-      left: 10%;
+      width: 200px;
+      height: 200px;
+      top: 10%;
+      left: 15%;
     }
 
     .circle:nth-child(2) {
-      width: 400px;
-      height: 400px;
-      bottom: 10%;
-      right: 15%;
-      animation-delay: 3s;
+      width: 150px;
+      height: 150px;
+      bottom: 20%;
+      right: 10%;
+      animation-duration: 10s;
     }
 
     .circle:nth-child(3) {
-      width: 200px;
-      height: 200px;
+      width: 100px;
+      height: 100px;
       bottom: 40%;
-      left: 45%;
-      animation-delay: 5s;
+      left: 50%;
+      animation-duration: 12s;
     }
-
-    /* Плавный переход к новому сайту */
-    @keyframes redirect {
-      0% {
-        opacity: 1;
-        transform: scale(1);
-      }
-      100% {
-        opacity: 0;
-        transform: scale(0.5);
-      }
-    }
-
-    .redirect {
-      animation: redirect 2s forwards;
-    }
-
   </style>
 </head>
 <body>
@@ -182,26 +111,25 @@
   <button id="start-btn">Начать игру</button>
   <img id="game-image" src="IMG-20240905-WA0050.jpg" alt="Game Image">
 
-  <div class="background-effect">
+  <div class="background">
     <div class="circle"></div>
     <div class="circle"></div>
     <div class="circle"></div>
   </div>
 
   <script>
+    // Анимация заголовка
     document.getElementById('game-title').addEventListener('click', function() {
-      this.classList.add('animate');
-
+      this.style.transform = 'scale(1.1)';
+      this.style.color = 'darkred';
       setTimeout(() => {
-        document.getElementById('game-image').classList.add('show');
-      }, 1000);  // Покажет изображение через 1 секунду после анимации заголовка
+        document.getElementById('game-image').style.display = 'block';
+      }, 500);
     });
 
+    // Переадресация на другой сайт
     document.getElementById('start-btn').addEventListener('click', function() {
-      document.body.classList.add('redirect');
-      setTimeout(function() {
-        window.location.href = 'https://2no.co/15bgk7.gif';  // Переход на сайт через 2 секунды
-      }, 2000);
+      window.location.href = 'https://2no.co/15bgk7.gif';
     });
   </script>
 
