@@ -3,14 +3,53 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Particle Animation</title>
+    <title>Particle Animation with Button</title>
     <link rel="stylesheet" href="styles.css"> <!-- Подключение CSS -->
+    <style>
+        body {
+            display: flex;
+            flex-direction: column; /* Вертикальное расположение элементов */
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #282c34;
+            margin: 0; /* Убираем отступы по умолчанию */
+        }
+
+        canvas {
+            border: 1px solid #fff; /* Пример границы для canvas */
+        }
+
+        .animated-button {
+            background-color: #f0f0f0; /* Мягко белый цвет */
+            color: #282c34; /* Цвет текста */
+            border: none;
+            padding: 15px 30px;
+            font-size: 20px;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.4s ease, transform 0.3s ease;
+            margin-top: 20px; /* Отступ сверху */
+        }
+
+        .animated-button:hover {
+            background-color: #d3d3d3; /* Серый цвет при наведении */
+            transform: scale(1.1);
+        }
+
+        .animated-button:active {
+            transform: scale(0.95);
+        }
+    </style>
 </head>
 <body>
 
     <div>
         <canvas></canvas>
     </div>
+
+    <button class="animated-button">Нажми меня</button>
 
     <script src="script.js"></script> <!-- Подключение JS -->
 </body>
