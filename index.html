@@ -3,26 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Particle Animation with Button</title>
-    <link rel="stylesheet" href="styles.css"> <!-- Подключение стилей для фона -->
+    <title>Particle Animation</title>
+    <link rel="stylesheet" href="styles.css"> <!-- Подключение CSS -->
 </head>
 <body>
 
     <div>
-        <canvas></canvas> <!-- Анимация фона -->
-        <div id="button-container"></div> <!-- Контейнер для кнопки -->
+        <canvas></canvas>
     </div>
 
-    <script src="script.js"></script> <!-- Подключение скрипта для анимации -->
-    <script>
-        // Загрузка кнопки из отдельного файла button.html
-        fetch('button.html')
-            .then(response => response.text())
-            .then(html => {
-                const parser = new DOMParser();
-                const doc = parser.parseFromString(html, 'text/html');
-                document.getElementById('button-container').appendChild(doc.body.firstElementChild);
-            });
-    </script>
+    <script src="script.js"></script> <!-- Подключение JS -->
 </body>
 </html>
