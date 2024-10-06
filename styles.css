@@ -1,44 +1,13 @@
-        body {
-            display: grid;
-            place-items: center;
-            height: 100dvh;
-            background: #222;
-            margin: 0; /* Убираем отступы */
-        }
+body {
+    display: grid;
+    place-items: center;
+    height: 100dvh;
+    background: #222;
+}
 
-        canvas {
-            position: fixed;
-            inset: 0;
-            width: 100%;
-            height: 100%;
-        }
-
-        .animated-button {
-            background-color: #f0f0f0; /* Мягко белый цвет */
-            color: #282c34; /* Цвет текста */
-            border: none;
-            padding: 15px 30px;
-            font-size: 20px;
-            font-weight: bold;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: background-color 0.4s ease, transform 0.3s ease;
-            z-index: 1; /* Кнопка поверх canvas */
-        }
-
-        .animated-button:hover {
-            background-color: #d3d3d3; /* Серый цвет при наведении */
-            transform: scale(1.1);
-        }
-
-        .animated-button:active {
-            transform: scale(0.95);
-        }
-    </style>
-</head>
-<body>
-
-    <canvas></canvas>
-
-    <button class="animated-button">Нажми меня</button>
-</body>
+canvas {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+}
