@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Particle Animation with Button</title>
     <link rel="stylesheet" href="styles.css"> <!-- Подключение стилей для фона -->
-    <link rel="stylesheet" href="button.css"> <!-- Подключение стилей для кнопки -->
 </head>
 <body>
 
@@ -20,7 +19,9 @@
         fetch('button.html')
             .then(response => response.text())
             .then(html => {
-                document.getElementById('button-container').innerHTML = html;
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(html, 'text/html');
+                document.getElementById('button-container').appendChild(doc.body.firstElementChild);
             });
     </script>
 </body>
