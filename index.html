@@ -35,13 +35,36 @@
       font-size: 48px;
       text-transform: uppercase;
       margin-bottom: 20px;
+      cursor: pointer;
       animation: neon 2s infinite alternate;
-      cursor: pointer; /* Добавлено для указания, что элемент кликабельный */
+      transition: transform 1s ease, opacity 1s ease;
     }
 
     @keyframes neon {
       0% { text-shadow: 0 0 5px red; }
       100% { text-shadow: 0 0 20px crimson, 0 0 30px red; }
+    }
+
+    h1.animate {
+      transform: translateY(-100px);
+      opacity: 0;
+    }
+
+    img {
+      display: none;
+      max-width: 80%;
+      max-height: 80%;
+      margin-top: 20px;
+    }
+
+    img.show {
+      display: block;
+      animation: fadeIn 1s ease forwards;
+    }
+
+    @keyframes fadeIn {
+      0% { opacity: 0; }
+      100% { opacity: 1; }
     }
 
     button {
@@ -78,185 +101,22 @@
     button:active {
       transform: scale(0.9);
     }
-
-    .countdown {
-      font-size: 48px;
-      margin-top: 20px;
-      display: none;
-      color: lime;
-      animation: pulse 0.5s infinite alternate;
-    }
-
-    @keyframes pulse {
-      0% { transform: scale(1); }
-      100% { transform: scale(1.2); }
-    }
-
-    .progress-bar {
-      width: 80%;
-      background-color: #333;
-      height: 30px;
-      border-radius: 15px;
-      margin-top: 20px;
-      overflow: hidden;
-      display: none;
-      box-shadow: 0 0 20px crimson;
-      position: relative;
-    }
-
-    .progress {
-      background-color: crimson;
-      height: 100%;
-      width: 0;
-      transition: width 1s linear, background-color 1s linear;
-      position: relative;
-    }
-
-    .progress:before {
-      content: '';
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      background: rgba(255, 255, 255, 0.5);
-      left: 0;
-      top: 0;
-      transform: scaleX(0);
-      transform-origin: right;
-      animation: spark 1s infinite;
-    }
-
-    @keyframes spark {
-      0% { transform: scaleX(0); }
-      50% { transform: scaleX(1); }
-      100% { transform: scaleX(0); }
-    }
-
-    .matrix {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.7);
-      overflow: hidden;
-      display: none;
-    }
-
-    .matrix span {
-      display: block;
-      position: absolute;
-      font-size: 16px;
-      font-family: 'Courier New', monospace;
-      color: lime;
-      text-shadow: 0 0 5px lime;
-      animation: fall 10s linear infinite;
-    }
-
-    @keyframes fall {
-      0% { transform: translateY(-100%); opacity: 1; }
-      100% { transform: translateY(100vh); opacity: 0; }
-    }
-
-    /* Новый стиль для анимации заголовка */
-    .move-out {
-      animation: moveOut 1s forwards;
-    }
-
-    @keyframes moveOut {
-      0% { transform: translateY(0); }
-      100% { transform: translateY(-100vh); opacity: 0; }
-    }
-
-    /* Стиль для изображения */
-    #game-image {
-      display: none;
-      width: 100%;
-      height: auto;
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      animation: fadeIn 1s forwards;
-    }
-
-    @keyframes fadeIn {
-      0% { opacity: 0; }
-      100% { opacity: 1; }
-    }
   </style>
 </head>
 <body>
 
   <h1 id="game-title">Игра Алимжана</h1>
   <button id="start-btn">Начать игру</button>
-  <div class="countdown" id="countdown">3</div>
-  <div class="progress-bar" id="progress-bar">
-    <div class="progress" id="progress"></div>
-  </div>
-  <div class="matrix" id="matrix"></div>
   <img id="game-image" src="IMG-20240905-WA0050.jpg" alt="Game Image">
-
-  <audio id="countdown-sound">
-    <source src="https://www.soundjay.com/button/beep-07.wav" type="audio/wav">
-  </audio>
-  <audio id="final-sound">
-    <source src="https://www.soundjay.com/explosion/explosion-01.mp3" type="audio/mp3">
-  </audio>
 
   <script>
     document.getElementById('game-title').addEventListener('click', function() {
-      this.classList.add('move-out'); // Добавить класс для анимации
+      this.classList.add('animate');
+
       setTimeout(() => {
-        document.getElementById('game-image').style.display = 'block'; // Показать изображение после анимации
-      }, 1000); // Время, равное продолжительности анимации
+        document.getElementById('game-image').classList.add('show');
+      }, 1000);  // Покажет изображение через 1 секунду после анимации заголовка
     });
-
-    document.getElementById('start-btn').addEventListener('click', function() {
-      this.style.display = 'none';
-      const countdown = document.getElementById('countdown');
-      const countdownSound = document.getElementById('countdown-sound');
-      const finalSound = document.getElementById('final-sound');
-      const progressBar = document.getElementById('progress-bar');
-      const progress = document.getElementById('progress');
-      const matrix = document.getElementById('matrix');
-
-      countdown.style.display = 'block';
-      progressBar.style.display = 'block';
-      matrix.style.display = 'block';
-      createMatrixEffect();
-      let count = 3;
-      let width = 0;
-
-      const interval = setInterval(() => {
-        countdownSound.play();
-        width += 33.33;
-        progress.style.width = `${width}%`;
-
-        if (count > 1) {
-          countdown.textContent = count;
-          count--;
-        } else {
-          clearInterval(interval);
-          finalSound.play();
-          setTimeout(() => {
-            window.location.href = "https://lyl.su/APjf";
-          }, 1000);
-        }
-      }, 1000);
-    });
-
-    function createMatrixEffect() {
-      const matrix = document.getElementById('matrix');
-      const symbols = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-      for (let i = 0; i < 100; i++) {
-        const span = document.createElement('span');
-        span.textContent = symbols.charAt(Math.floor(Math.random() * symbols.length));
-        span.style.left = Math.random() * 100 + 'vw';
-        span.style.top = Math.random() * -100 + 'vh';
-        span.style.animationDelay = Math.random() * 5 + 's';
-        matrix.appendChild(span);
-      }
-    }
   </script>
 
 </body>
