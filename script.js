@@ -2,14 +2,22 @@ let mouse = { x: 0, y: 0 };
 let particles = [];
 let currentTextIndex = 0;
 let nextTextTimeout;
-const explosionRadius = 200; // радиус взрыва
-const gravity = 0.05; // гравитация для частиц
-const fadeSpeed = 0.02; // скорость затухания частиц
+
+// Параметры конфигурации
+const config = {
+    particleCount: 500, // Количество частиц
+    explosionRadius: 150, // Радиус взрыва
+    gravity: 0.03, // Гравитация
+    fadeSpeed: 0.02, // Скорость затухания
+    textChangeInterval: 5000, // Интервал смены текста
+    colorChangeSpeed: 1.5 // Скорость изменения цвета частиц
+};
 
 // Функция для создания частиц
 function createParticles() {
+    particles.length = 0; // Очистить старые частицы
     for (let i = 0; i < config.particleCount; i++) {
-        particles[i] = {
+        particles.push({
             baseX: Math.random() * canvas.width,
             baseY: Math.random() * canvas.height,
             x: Math.random() * canvas.width,
@@ -22,7 +30,7 @@ function createParticles() {
             brightness: 1,
             isExploding: false,
             angle: Math.random() * 360, // угол для разлетания
-        };
+        });
     }
 }
 
@@ -34,12 +42,11 @@ function animate() {
             // Анимация взрыва
             particle.x += particle.speedX;
             particle.y += particle.speedY;
-            particle.speedX *= 0.98;
-            particle.speedY += gravity;
-            particle.brightness -= fadeSpeed;
+            particle.speedX *= 0.98; // Замедление взрыва
+            particle.speedY += config.gravity; // Гравитация
+            particle.brightness -= config.fadeSpeed;
 
-            // Изменение цвета частиц при взрыве
-            particle.color += 2; 
+            particle.color += config.colorChangeSpeed; // Изменение цвета
 
             if (particle.brightness <= 0) {
                 particle.brightness = 0;
@@ -52,7 +59,6 @@ function animate() {
             particle.x += (particle.baseX - particle.x) * 0.05;
             particle.y += (particle.baseY - particle.y) * 0.05;
 
-            // Постепенное изменение цвета частиц
             particle.color += 0.5;
             particle.brightness = 0.5 + Math.random() * 0.5;
         }
@@ -84,7 +90,7 @@ canvas.addEventListener("click", (event) => {
         let distY = event.clientY - particle.y;
         let distance = Math.sqrt(distX * distX + distY * distY);
 
-        if (distance < explosionRadius) {
+        if (distance < config.explosionRadius) {
             particle.isExploding = true;
             const angle = Math.random() * Math.PI * 2; // угол разлетания
             particle.speedX = Math.cos(angle) * 10;
@@ -117,6 +123,31 @@ function changeText() {
 
     nextTextTimeout = setTimeout(changeText, config.textChangeInterval);
 }
+
+// Добавляем UI настройки
+const controls = document.createElement('div');
+controls.innerHTML = `
+    <label>Particle Count: <input type="range" min="100" max="1000" value="${config.particleCount}" id="particleCount"></label>
+    <label>Explosion Radius: <input type="range" min="50" max="300" value="${config.explosionRadius}" id="explosionRadius"></label>
+    <label>Gravity: <input type="range" min="0.01" max="0.1" step="0.01" value="${config.gravity}" id="gravity"></label>
+    <label>Fade Speed: <input type="range" min="0.01" max="0.1" step="0.01" value="${config.fadeSpeed}" id="fadeSpeed"></label>
+`;
+document.body.appendChild(controls);
+
+// Обновляем параметры на лету
+document.getElementById('particleCount').addEventListener('input', (e) => {
+    config.particleCount = e.target.value;
+    createParticles(); // Пересоздаем частицы при изменении
+});
+document.getElementById('explosionRadius').addEventListener('input', (e) => {
+    config.explosionRadius = e.target.value;
+});
+document.getElementById('gravity').addEventListener('input', (e) => {
+    config.gravity = e.target.value;
+});
+document.getElementById('fadeSpeed').addEventListener('input', (e) => {
+    config.fadeSpeed = e.target.value;
+});
 
 // Начальные настройки
 gl.clearColor(0, 0, 0, 1);
