@@ -10,7 +10,8 @@ const config = {
     gravity: 0.03, // Гравитация
     fadeSpeed: 0.02, // Скорость затухания
     textChangeInterval: 5000, // Интервал смены текста
-    colorChangeSpeed: 1.5 // Скорость изменения цвета частиц
+    colorChangeSpeed: 1.5, // Скорость изменения цвета частиц
+    autoplayInterval: 2000 // Интервал автопроигрывания
 };
 
 // Функция для создания частиц
@@ -83,8 +84,8 @@ canvas.addEventListener("mouseleave", () => {
     mouse.y = -500;
 });
 
-canvas.addEventListener("click", (event) => {
-    // Взрыв частиц при клике
+// Функция для выполнения клика
+function triggerExplosion(event) {
     particles.forEach((particle) => {
         let distX = event.clientX - particle.x;
         let distY = event.clientY - particle.y;
@@ -98,7 +99,17 @@ canvas.addEventListener("click", (event) => {
             particle.brightness = 1;
         }
     });
-});
+}
+
+// Автоматическое срабатывание клика
+function autoplay() {
+    const x = Math.random() * canvas.width;
+    const y = Math.random() * canvas.height;
+    triggerExplosion({ clientX: x, clientY: y });
+}
+
+// Интервал автопроигрывания
+setInterval(autoplay, config.autoplayInterval);
 
 window.addEventListener("resize", () => {
     canvas.width = window.innerWidth;
@@ -131,6 +142,7 @@ controls.innerHTML = `
     <label>Explosion Radius: <input type="range" min="50" max="300" value="${config.explosionRadius}" id="explosionRadius"></label>
     <label>Gravity: <input type="range" min="0.01" max="0.1" step="0.01" value="${config.gravity}" id="gravity"></label>
     <label>Fade Speed: <input type="range" min="0.01" max="0.1" step="0.01" value="${config.fadeSpeed}" id="fadeSpeed"></label>
+    <label>Autoplay Interval: <input type="range" min="500" max="5000" step="500" value="${config.autoplayInterval}" id="autoplayInterval"></label>
 `;
 document.body.appendChild(controls);
 
@@ -147,6 +159,9 @@ document.getElementById('gravity').addEventListener('input', (e) => {
 });
 document.getElementById('fadeSpeed').addEventListener('input', (e) => {
     config.fadeSpeed = e.target.value;
+});
+document.getElementById('autoplayInterval').addEventListener('input', (e) => {
+    config.autoplayInterval = e.target.value;
 });
 
 // Начальные настройки
